@@ -30,6 +30,7 @@ def lambda_handler(event, context):
         "indexers": {
             "BTC": {
                 "name": "Bitcoin",
+                "icon": "assets/images/btc.png",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/btc/public/block/latest",
@@ -43,6 +44,7 @@ def lambda_handler(event, context):
             },
             "LTC": {
                 "name": "Litecoin",
+                "icon": "assets/images/ltc.png",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/ltc/public/block/latest",
@@ -56,6 +58,7 @@ def lambda_handler(event, context):
             },
             "BCH": {
                 "name": "Bitcoin Cash",
+                "icon": "assets/images/bch.png",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/bch/public/block/latest",
@@ -69,6 +72,7 @@ def lambda_handler(event, context):
             },
             "ETH": {
                 "name": "Ethereum",
+                "icon": "assets/images/eth.png",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/eth/public/block/latest",
@@ -82,6 +86,7 @@ def lambda_handler(event, context):
             },
             "DASH": {
                 "name": "Dash",
+                "icon": "assets/images/dash.png",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/dash/public/block/latest",
@@ -95,6 +100,7 @@ def lambda_handler(event, context):
             },
             "ZEC": {
                 "name": "ZCash",
+                "icon": "assets/images/zec.png",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/zec/public/block/latest",
@@ -108,6 +114,7 @@ def lambda_handler(event, context):
             },
             "XRP": {
                 "name": "Ripple",
+                "icon": "assets/images/xrp.png",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/xrp/public/block/latest",
@@ -121,6 +128,7 @@ def lambda_handler(event, context):
             },
             "XLM": {
                 "name": "Stellar",
+                "icon": "assets/images/xlm.png",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/xlm/public/block/latest",
