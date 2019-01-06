@@ -5,7 +5,7 @@ This is the "back-end" portion of a (slightly) larger system that powers a web b
 
 # How It Works
 
-1. The back-end app polls BitGo's indexers (prod + test) to find the latest block processed for each coin.
+1. The Lambda fcn defined in this project, polls BitGo's indexers (prod + test) to find the latest block processed for each coin.
 2. It compares those values to public block explorers to determine whether or not we are behind chain head.
 3. It stores the status of each of our indexers in a JSON file on s3.
 4. The front-end app (this repo) fetches the most recent status file from s3 and uses it to construct a dashboard for the user.
