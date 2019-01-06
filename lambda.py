@@ -54,6 +54,84 @@ def lambda_handler(event, context):
                     "publicURL": "https://chain.so/api/v2/get_info/LTCTEST"
                 }]
             },
+            "BCH": {
+                "name": "Bitcoin Cash",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/bch/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/BCH"
+                },
+                {
+                    "network": "TestNet",
+                    "bgURL": "https://test.bitgo.com/api/v2/tbch/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/BCHTEST"
+                }]
+            },
+            "ETH": {
+                "name": "Ethereum",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/eth/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/ETH"
+                },
+                {
+                    "network": "TestNet",
+                    "bgURL": "https://test.bitgo.com/api/v2/tbch/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/ETHTEST"
+                }]
+            },
+            "DASH": {
+                "name": "Dash",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/dash/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/DASH"
+                },
+                {
+                    "network": "TestNet",
+                    "bgURL": "https://test.bitgo.com/api/v2/tdash/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/DASHTEST"
+                }]
+            },
+            "ZEC": {
+                "name": "ZCash",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/zec/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/ZEC"
+                },
+                {
+                    "network": "TestNet",
+                    "bgURL": "https://test.bitgo.com/api/v2/tzec/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/ZECTEST"
+                }]
+            },
+            "XRP": {
+                "name": "Ripple",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/xrp/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/XRP"
+                },
+                {
+                    "network": "TestNet",
+                    "bgURL": "https://test.bitgo.com/api/v2/txrp/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/XRPTEST"
+                }]
+            },
+            "XLM": {
+                "name": "Stellar",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/xlm/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/XLM"
+                },
+                {
+                    "network": "TestNet",
+                    "bgURL": "https://test.bitgo.com/api/v2/txlm/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/XRPTEST"
+                }]
+            },
         }
     }
 
