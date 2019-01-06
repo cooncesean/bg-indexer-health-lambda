@@ -62,7 +62,7 @@ def blockscout_api_handler(response_data):
 
     Sample URL: https://blockscout.com/eth/kovan/blocks?type=JSON
     """
-    return int(response_data['next_page_path'].split('/')[-1].split('=')[-1])
+    return int(response_data['items'][0].split('data-block-number="')[-1].split('"')[0])
 
 
 def ripple_api_handler(response_data):
