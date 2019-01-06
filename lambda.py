@@ -146,13 +146,16 @@ def lambda_handler(event, context):
             response = requests.get(env_data['bgURL'])
             bg_response = json.loads(response.content)
 
+            # Set default values (assume a healthy status)
+            env_data['status'] = True
+            env_data['blocksBehind'] = 0
+            env_data['latestBlock'] = bg_response['height']
+
             # Sometimes, BitGo will inform us directly that it's at chainhead.
             # In these cases, assume that that is truthy, and move on with
             # checking against a public block explorer.
             if bg_response.get('chainHead', False):
-                env_data['status'] = True
-                env_data['blocksBehind'] = 0
-                env_data['latestBlock'] = bg_response['height']
+                # No need to continue processing - keep the default data and move on
                 continue
 
             # Compare the current chain height of BitGo to that of a public
