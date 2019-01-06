@@ -246,25 +246,16 @@ def lambda_handler(event, context):
             env_data['blocksBehind'] = 0
             env_data['latestBlock'] = bg_response['height']
 
-            # Fetch the api handler defined in the indexer config and pop it
-            # from the dict at the same time; we don't want to provide it in the
-            # serialized JSON output)
-            api_handler = env_data.pop('apiHandler')
-
-            # Sometimes, BitGo will inform us directly that it's at chainhead.
-            # In these cases, assume that that is truthy, and move on with
-            # checking against a public block explorer.
-            if bg_response.get('chainHead', False):
-                # No need to continue processing - keep the default data and move on
-                continue
-
             # Compare the current chain height of BitGo to that of a public
             # block explorer
             response = requests.get(env_data['publicURL'])
             public_response = json.loads(response.content)
 
             # Use the handler defined on the coin + network to parse the response
-            # and return the public height of the blockchain
+            # and return the public height of the blockchain.
+            # Pop it from the dict at the same time; we don't want to provide it
+            # in the serialized JSON output.
+            api_handler = env_data.pop('apiHandler')
             public_block_explorer_height = api_handler(public_response)
 
             # If the difference is greater than our threshold, pitch a fit
