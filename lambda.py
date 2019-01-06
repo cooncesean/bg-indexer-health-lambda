@@ -255,11 +255,6 @@ def lambda_handler(event, context):
             response = requests.get(env_data['bgURL'])
             bg_response = json.loads(response.content)
 
-            # Set default values (assume a healthy status)
-            env_data['status'] = True
-            env_data['blocksBehind'] = 0
-            env_data['latestBlock'] = bg_response['height']
-
             # Compare the current chain height of BitGo to that of a public
             # block explorer
             response = requests.get(env_data['publicURL'])
@@ -272,11 +267,15 @@ def lambda_handler(event, context):
             api_handler = env_data.pop('apiHandler')
             public_block_explorer_height = api_handler(public_response)
 
+            # Set values (assume a healthy status; it is flipped below if the
+            # chain head delta exceeds our threshold)
+            env_data['status'] = True
+            env_data['latestBlock'] = bg_response['height']
+            env_data['blocksBehind'] = '{} blocks'.format(public_block_explorer_height - bg_response['height'])
+
             # If the difference is greater than our threshold, pitch a fit
             if (public_block_explorer_height - bg_response['height']) > BLOCKS_BEHIND_THRESHOLD:
                 env_data['status'] = False
-                env_data['blocksBehind'] = '{} blocks'.format(public_block_explorer_height - bg_response['height'])
-                env_data['latestBlock'] = bg_response['height']
 
     # Jsonify the output dict
     string = json.dumps(output_data)
