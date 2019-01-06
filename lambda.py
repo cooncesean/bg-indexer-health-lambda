@@ -1,4 +1,5 @@
 import datetime
+import dateutil
 import json
 
 import boto3
@@ -14,7 +15,8 @@ def lambda_handler(event, context):
 
     The data structure pushed to s3 will look like:
     """
-    current_time = datetime.datetime.now()
+    pst = dateutil.tz.gettz('US/Pacific')
+    current_time = datetime.datetime.now(tz=pst)
 
     # The number of blocks we allow BitGo to fall behind for a given chain
     # before alerting the dashboard
@@ -25,7 +27,7 @@ def lambda_handler(event, context):
     # values like `status`, `latestBlock`, and `blocksBehind` have been populated
     output_data = {
         "metadata": {
-            "dateFetched": current_time.strftime('%Y-%m-%d at %H:%M')
+            "dateFetched": current_time.strftime('%Y-%m-%d at %I:%M%p PST')
         },
         "indexers": {
             "BTC": {
