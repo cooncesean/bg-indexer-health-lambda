@@ -12,6 +12,8 @@ def chainso_api_handler(response_data):
     the block height for the given coin + network.
 
     Used to parse: BTC, LTC, DASH, ZEC
+
+    Sample URL: https://chain.so/api/v2/get_info/BTC
     """
     return response_data['data']['blocks']
 
@@ -22,6 +24,8 @@ def btcdotcom_api_handler(response_data):
     the block height for the given coin + network.
 
     Used to parse: BCH
+
+    Sample URL: https://bch-chain.api.btc.com/v3/block/latest/
     """
     return response_data['data']['height']
 
@@ -32,6 +36,8 @@ def blocktrail_api_handler(response_data):
     the block height for the given coin + network.
 
     Used to parse: TBCH
+
+    Sample URL: https://www.blocktrail.com/tBCC/json/blockchain/block_all/main/1
     """
     return int(response_data['last_blocks'][0]['height'])
 
@@ -41,6 +47,8 @@ def blockcypher_api_handler(response_data):
     the block height for the given coin + network.
 
     Used to parse: ETH
+
+    Sample URL: https://api.blockcypher.com/v1/eth/main
     """
     return response_data['height']
 
@@ -51,6 +59,8 @@ def blockscout_api_handler(response_data):
     the block height for the given coin + network.
 
     Used to parse: TETH (Kovan)
+
+    Sample URL: https://blockscout.com/eth/kovan/blocks?type=JSON
     """
     return int(response_data['next_page_path'].split('/')[-1].split('=')[-1])
 
@@ -61,6 +71,8 @@ def ripple_api_handler(response_data):
     the block height for the given coin + network.
 
     Used to parse: XRP
+
+    Sample URL: https://data.ripple.com/v2/ledgers/
     """
     return response_data['ledger']['ledger_index']
 
@@ -71,6 +83,8 @@ def stellar_api_handler(response_data):
     the block height for the given coin + network.
 
     Used to parse: XRP
+
+    Sample URL: https://horizon.stellar.org/ledgers?order=desc
     """
     return response_data['_embedded']['records'][0]['sequence']
 
@@ -82,7 +96,7 @@ def lambda_handler(event, context):
     JSON files, one time-stamped file and another that represents the "latest"
     file that a front-end app will pull from).
 
-    The data structure pushed to s3 will look like:
+    The final data structure pushed to s3 looks like: https://s3-us-west-2.amazonaws.com/bitgo-indexer-health/latest.json
     """
     pst = dateutil.tz.gettz('US/Pacific')
     current_time = datetime.datetime.now(tz=pst)
