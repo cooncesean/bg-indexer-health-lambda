@@ -114,8 +114,24 @@ def lambda_handler(event, context):
             "dateFetched": current_time.strftime('%Y-%m-%d at %I:%M%p PST')
         },
         "indexers": {
+            "v1BTC": {
+                "name": "v1 Bitcoin",
+                "icon": "assets/images/btc.png",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/btc/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/BTC",
+                    "apiHandler": chainso_api_handler
+                },
+                {
+                    "network": "TestNet",
+                    "bgURL": "https://test.bitgo.com/api/v1/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
+                    "apiHandler": chainso_api_handler
+                }]
+            },
             "BTC": {
-                "name": "Bitcoin",
+                "name": "v2 Bitcoin",
                 "icon": "assets/images/btc.png",
                 "environments": [{
                     "network": "MainNet",
