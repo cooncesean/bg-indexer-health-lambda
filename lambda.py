@@ -265,6 +265,14 @@ def lambda_handler(event, context):
 
             bg_response = json.loads(response.content)
 
+            # If `height` isn't in the response, raise a red flag; this happens
+            # when the IMS has gotten into a wierd state.
+            if 'height' not in bg_response:
+                env_data['status'] = False
+                env_data['latestBlock'] = 'IMS Unresponsive'
+                env_data['blocksBehind'] = 'IMS Unresponsive'
+                continue
+
             # Compare the current chain height of BitGo to that of a public
             # block explorer
             response = requests.get(env_data['publicURL'])
