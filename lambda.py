@@ -3,6 +3,7 @@ import dateutil
 import json
 
 import boto3
+from botocore.exceptions import ConnectionError
 from botocore.vendored import requests
 
 
@@ -252,7 +253,16 @@ def lambda_handler(event, context):
         for env_data in coin_data['environments']:
 
             # Hit BitGo's IMS to fetch data about the most recently processed block
-            response = requests.get(env_data['bgURL'])
+            try:
+                response = requests.get(env_data['bgURL'], timeout=4)
+            # If the server took more than four seconds to respond, consider it
+            # down and alert the status
+            except ConnectionError:
+                env_data['status'] = False
+                env_data['latestBlock'] = 'IMS Unresponsive'
+                env_data['blocksBehind'] = 'IMS Unresponsive'
+                continue
+
             bg_response = json.loads(response.content)
 
             # Compare the current chain height of BitGo to that of a public
