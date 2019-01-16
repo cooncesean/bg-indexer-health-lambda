@@ -19,6 +19,18 @@ def chainso_api_handler(response_data):
     return response_data['data']['blocks']
 
 
+def insight_api_handler(response_data):
+    """
+    An API handler for Chain.so (a public block explorer) API responses. Returns
+    the block height for the given coin + network.
+
+    Used to parse: TDASH
+
+    Sample URL: https://chain.so/api/v2/get_info/BTC
+    """
+    return response_data['blocks'][0]['height']
+
+
 def btcdotcom_api_handler(response_data):
     """
     An API handler for btc.com (a public block explorer) API responses. Returns
@@ -206,8 +218,8 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tdash/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/DASHTEST",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "https://test.insight.dash.siampm.com/api/blocks",
+                    "apiHandler": insight_api_handler,
                 }]
             },
             "ZEC": {
