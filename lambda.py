@@ -54,16 +54,16 @@ def blocktrail_api_handler(response_data):
     """
     return int(response_data['last_blocks'][0]['height'])
 
-def blockcypher_api_handler(response_data):
+def etherchain_api_handler(response_data):
     """
-    An API handler for blockcypher.com (a public block explorer) API responses. Returns
+    An API handler for etherchain.org (a public block explorer) API responses. Returns
     the block height for the given coin + network.
 
     Used to parse: ETH
 
-    Sample URL: https://api.blockcypher.com/v1/eth/main
+    Sample URL: https://www.etherchain.org/blocks/data
     """
-    return response_data['height']
+    return response_data['recordsTotal']
 
 
 def blockscout_api_handler(response_data):
@@ -196,8 +196,8 @@ def lambda_handler(event, context):
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/eth/public/block/latest",
-                    "publicURL": "https://api.blockcypher.com/v1/eth/main",
-                    "apiHandler": blockcypher_api_handler,
+                    "publicURL": "https://www.etherchain.org/blocks/data",
+                    "apiHandler": etherchain_api_handler,
                 },
                 {
                     "network": "TestNet",
