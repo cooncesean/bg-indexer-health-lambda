@@ -1,6 +1,7 @@
 import datetime
 import dateutil
 import json
+import time
 
 import boto3
 from botocore.exceptions import ConnectionError
@@ -43,16 +44,16 @@ def btcdotcom_api_handler(response_data):
     return response_data['data']['height']
 
 
-def blocktrail_api_handler(response_data):
+def bitcoin_dot_com_api_handler(response_data):
     """
-    An API handler for blocktrail.com (a public block explorer) API responses. Returns
+    An API handler for bitcoin.com (a public block explorer) API responses. Returns
     the block height for the given coin + network.
 
     Used to parse: TBCH
 
-    Sample URL: https://www.blocktrail.com/tBCC/json/blockchain/block_all/main/1
+    Sample URL: https://explorer.bitcoin.com/api/tbch/blocks/?limit=1
     """
-    return int(response_data['last_blocks'][0]['height'])
+    return int(response_data['blocks'][0]['height'])
 
 def etherchain_api_handler(response_data):
     """
@@ -186,8 +187,8 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tbch/public/block/latest",
-                    "publicURL": "https://www.blocktrail.com/tBCC/json/blockchain/block_all/main/1",
-                    "apiHandler": blocktrail_api_handler,
+                    "publicURL": "https://explorer.bitcoin.com/api/tbch/blocks/?limit=1",
+                    "apiHandler": bitcoin_dot_com_api_handler,
                 }]
             },
             "ETH": {
@@ -304,14 +305,33 @@ def lambda_handler(event, context):
             # Compare the current chain height of BitGo to that of a public
             # block explorer
             response = requests.get(env_data['publicURL'])
-            public_response = json.loads(response.content)
+            print(response)
+            print(env_data['publicURL'])
+            retry_count = 0
+            status_code = response.status_code
+            while status_code != 200:
+                time.sleep(8)
+                if retry_count > 4:
+                    break
+                response = requests.get(env_data['publicURL'])
+                status_code = response.status_code
+                if status_code >= 500:
+                    break
+
+            try:
+                public_response = json.loads(response.content)
+            except:
+                public_response = {}
 
             # Use the handler defined on the coin + network to parse the response
             # and return the public height of the blockchain.
             # Pop it from the dict at the same time; we don't want to provide it
             # in the serialized JSON output.
             api_handler = env_data.pop('apiHandler')
-            public_block_explorer_height = api_handler(public_response)
+            try:
+                public_block_explorer_height = api_handler(public_response)
+            except KeyError:
+                public_block_explorer_height = 0
 
             # Set values (assume a healthy status; it is flipped below if the
             # chain head delta exceeds our threshold)
