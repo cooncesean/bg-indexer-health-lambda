@@ -103,6 +103,17 @@ def stellar_api_handler(response_data):
     return response_data['_embedded']['records'][0]['sequence']
 
 
+def blockchair_api_handler(response_data):
+    """
+    An API handler for blockchair (a public block explorer) API responses. Returns
+    the block height for the given coin + network.
+
+    Used to parse: BSV
+
+    Sample URL: https://api.blockchair.com/bitcoin-sv/blocks?limit=1
+    """
+    return response_data['data'][0]['id']
+
 def lambda_handler(event, context):
     """
     Runs through every indexer in BitGo's stack, compares it state to a public
@@ -189,6 +200,20 @@ def lambda_handler(event, context):
                     "bgURL": "https://test.bitgo.com/api/v2/tbch/public/block/latest",
                     "publicURL": "https://explorer.bitcoin.com/api/tbch/blocks/?limit=1",
                     "apiHandler": bitcoin_dot_com_api_handler,
+                }]
+            },
+            "BSV ": {
+                "name": "Bitcoin SV",
+                "icon": "assets/images/bsv.png",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/bsv/public/block/latest",
+                    "publicURL": "https://api.blockchair.com/bitcoin-sv/blocks?limit=1",
+                    "apiHandler": blockchair_api_handler,
+                },
+                {
+                    # no public testnet block explorer
+                    "network": "MainNet",
                 }]
             },
             "ETH": {
@@ -280,6 +305,13 @@ def lambda_handler(event, context):
     # 3. Add the state to the dict
     for coin_symbol, coin_data in output_data['indexers'].items():
         for env_data in coin_data['environments']:
+            
+            # If a bgURL is not defined for a particular env, return
+            if 'bgURL' not in env_data:
+                env_data['status'] = False
+                env_data['latestBlock'] = 'No Public URL'
+                env_data['blocksBehind'] = 'n/a'
+                continue
 
             # Hit BitGo's IMS to fetch data about the most recently processed block
             try:
@@ -302,8 +334,6 @@ def lambda_handler(event, context):
                 env_data['blocksBehind'] = 'IMS Unresponsive'
                 continue
 
-            # Compare the current chain height of BitGo to that of a public
-            # block explorer
             response = requests.get(env_data['publicURL'])
             print(response)
             print(env_data['publicURL'])
