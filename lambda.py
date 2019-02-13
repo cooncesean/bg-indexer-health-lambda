@@ -213,7 +213,7 @@ def lambda_handler(event, context):
                 },
                 {
                     # no public testnet block explorer
-                    "network": "MainNet",
+                    "network": "TestNet",
                 }]
             },
             "ETH": {
@@ -305,7 +305,7 @@ def lambda_handler(event, context):
     # 3. Add the state to the dict
     for coin_symbol, coin_data in output_data['indexers'].items():
         for env_data in coin_data['environments']:
-            
+
             # If a bgURL is not defined for a particular env, return
             if 'bgURL' not in env_data:
                 env_data['status'] = False
