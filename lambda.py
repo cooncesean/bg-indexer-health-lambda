@@ -308,7 +308,7 @@ def lambda_handler(event, context):
 
             # If a bgURL is not defined for a particular env, return
             if 'bgURL' not in env_data:
-                env_data['status'] = False
+                env_data['status'] = True
                 env_data['latestBlock'] = 'No Public URL'
                 env_data['blocksBehind'] = 'n/a'
                 continue
