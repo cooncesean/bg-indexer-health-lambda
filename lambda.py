@@ -8,7 +8,57 @@ from botocore.exceptions import ConnectionError
 from botocore.vendored import requests
 
 
-def chainso_api_handler(response_data):
+class PublicBlockExplorerHandler:
+    """
+    This class based function handles the calling and parsing of urls that
+    point at public block explorers. The function always returns the height
+    of the current public block on the network specified.
+
+    We compare this height to the height of our internal block explorers to
+    ensure that we are at or near chainhead.
+    """
+    def get_url_and_return_height(self, public_block_explorer_url):
+        """
+        Takes the URL of the public block explore and returns the height of the
+        most current public block after requesting the url and parsing the repsonse.
+        """
+        response = requests.get(public_block_explorer_url)
+        print(public_block_explorer_url)
+        print(response)
+        retry_count = 0
+        status_code = response.status_code
+        while status_code != 200:
+            time.sleep(8)
+            if retry_count > 4:
+                break
+            response = requests.get(public_block_explorer_url)
+            status_code = response.status_code
+            if status_code >= 500:
+                break
+
+        try:
+            public_response = json.loads(response.content)
+        except:
+            public_response = {}
+
+        # Parse the response and return the public height of the blockchain.
+        # This is where subclasses typically override behavior to handle custom
+        # response parsing based on the public explorer being called.
+        try:
+            public_block_explorer_height = self.parse_request_and_return_height(public_response)
+        except KeyError:
+            public_block_explorer_height = 0
+
+        return public_block_explorer_height
+
+    def parse_request_and_return_height(self, public_response):
+        """
+        Hook that allows subclassess to implement custom response parsing logic.
+        """
+        raise NotImplementedError
+
+
+class ChainSoAPIHandler(PublicBlockExplorerHandler):
     """
     An API handler for Chain.so (a public block explorer) API responses. Returns
     the block height for the given coin + network.
@@ -17,22 +67,24 @@ def chainso_api_handler(response_data):
 
     Sample URL: https://chain.so/api/v2/get_info/BTC
     """
-    return response_data['data']['blocks']
+    def parse_request_and_return_height(self, public_response):
+        return public_response['data']['blocks']
 
 
-def insight_api_handler(response_data):
+class InsightAPIHandler(PublicBlockExplorerHandler):
     """
-    An API handler for Chain.so (a public block explorer) API responses. Returns
+    An API handler for Insight (a public block explorer) API responses. Returns
     the block height for the given coin + network.
 
     Used to parse: TDASH
 
-    Sample URL: https://chain.so/api/v2/get_info/BTC
+    Sample URL: https://test.insight.dash.siampm.com/api/blocks
     """
-    return response_data['blocks'][0]['height']
+    def parse_request_and_return_height(self, public_response):
+        return public_response['blocks'][0]['height']
 
 
-def btcdotcom_api_handler(response_data):
+class BTCDotComAPIHandler(PublicBlockExplorerHandler):
     """
     An API handler for btc.com (a public block explorer) API responses. Returns
     the block height for the given coin + network.
@@ -41,10 +93,10 @@ def btcdotcom_api_handler(response_data):
 
     Sample URL: https://bch-chain.api.btc.com/v3/block/latest/
     """
-    return response_data['data']['height']
+    def parse_request_and_return_height(self, public_response):
+        return public_response['data']['height']
 
-
-def bitcoin_dot_com_api_handler(response_data):
+class BitcoinDotComAPIHandler(PublicBlockExplorerHandler):
     """
     An API handler for bitcoin.com (a public block explorer) API responses. Returns
     the block height for the given coin + network.
@@ -53,33 +105,24 @@ def bitcoin_dot_com_api_handler(response_data):
 
     Sample URL: https://explorer.bitcoin.com/api/tbch/blocks/?limit=1
     """
-    return int(response_data['blocks'][0]['height'])
+    def parse_request_and_return_height(self, public_response):
+        return int(public_response['blocks'][0]['height'])
 
-def etherchain_api_handler(response_data):
+
+class EtherscanAPIHandler(PublicBlockExplorerHandler):
     """
-    An API handler for etherchain.org (a public block explorer) API responses. Returns
+    An API handler for etherscan.io (a public block explorer) API responses. Returns
     the block height for the given coin + network.
 
-    Used to parse: ETH
+    Used to parse: ETH, TETH (Kovan)
 
-    Sample URL: https://www.etherchain.org/blocks/data
+    Sample URL: https://kovan.etherscan.io/api?module=proxy&action=eth_blockNumber
     """
-    return response_data['recordsTotal']
+    def parse_request_and_return_height(self, public_response):
+        return int(public_response['result'], 16)
 
 
-def blockscout_api_handler(response_data):
-    """
-    An API handler for blockscout.com (a public block explorer) API responses. Returns
-    the block height for the given coin + network.
-
-    Used to parse: TETH (Kovan)
-
-    Sample URL: https://blockscout.com/eth/kovan/blocks?type=JSON
-    """
-    return int(response_data['items'][0].split('data-block-number="')[-1].split('"')[0])
-
-
-def ripple_api_handler(response_data):
+class RippleAPIHandler(PublicBlockExplorerHandler):
     """
     An API handler for data.ripple.com (a public block explorer) API responses. Returns
     the block height for the given coin + network.
@@ -88,22 +131,24 @@ def ripple_api_handler(response_data):
 
     Sample URL: https://data.ripple.com/v2/ledgers/
     """
-    return response_data['ledger']['ledger_index']
+    def parse_request_and_return_height(self, public_response):
+        return public_response['ledger']['ledger_index']
 
 
-def stellar_api_handler(response_data):
+class StellarAPIHandler(PublicBlockExplorerHandler):
     """
-    An API handler for data.ripple.com (a public block explorer) API responses. Returns
+    An API handler for stellar.org (a public block explorer) API responses. Returns
     the block height for the given coin + network.
 
-    Used to parse: XRP
+    Used to parse: XLM, TXLM
 
     Sample URL: https://horizon.stellar.org/ledgers?order=desc
     """
-    return response_data['_embedded']['records'][0]['sequence']
+    def parse_request_and_return_height(self, public_response):
+        return public_response['_embedded']['records'][0]['sequence']
 
 
-def blockchair_api_handler(response_data):
+class BlockchairAPIHandler(PublicBlockExplorerHandler):
     """
     An API handler for blockchair (a public block explorer) API responses. Returns
     the block height for the given coin + network.
@@ -112,7 +157,9 @@ def blockchair_api_handler(response_data):
 
     Sample URL: https://api.blockchair.com/bitcoin-sv/blocks?limit=1
     """
-    return response_data['data'][0]['id']
+    def parse_request_and_return_height(self, public_response):
+        return public_response['data'][0]['id']
+
 
 def lambda_handler(event, context):
     """
@@ -145,13 +192,13 @@ def lambda_handler(event, context):
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/btc/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/BTC",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": ChainSoAPIHandler
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v1/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": ChainSoAPIHandler
                 }]
             },
             "BTC": {
@@ -161,13 +208,13 @@ def lambda_handler(event, context):
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/btc/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/BTC",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": ChainSoAPIHandler
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tbtc/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": ChainSoAPIHandler
                 }]
             },
             "LTC": {
@@ -177,13 +224,13 @@ def lambda_handler(event, context):
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/ltc/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/LTC",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": ChainSoAPIHandler
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tltc/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/LTCTEST",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": ChainSoAPIHandler
                 }]
             },
             "BCH": {
@@ -193,13 +240,13 @@ def lambda_handler(event, context):
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/bch/public/block/latest",
                     "publicURL": "https://bch-chain.api.btc.com/v3/block/latest/",
-                    "apiHandler": btcdotcom_api_handler,
+                    "apiHandler": BTCDotComAPIHandler,
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tbch/public/block/latest",
                     "publicURL": "https://explorer.bitcoin.com/api/tbch/blocks/?limit=1",
-                    "apiHandler": bitcoin_dot_com_api_handler,
+                    "apiHandler": BitcoinDotComAPIHandler,
                 }]
             },
             "BSV ": {
@@ -209,7 +256,7 @@ def lambda_handler(event, context):
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/bsv/public/block/latest",
                     "publicURL": "https://api.blockchair.com/bitcoin-sv/blocks?limit=1",
-                    "apiHandler": blockchair_api_handler,
+                    "apiHandler": BlockchairAPIHandler,
                 },
                 {
                     # no public testnet block explorer
@@ -222,14 +269,14 @@ def lambda_handler(event, context):
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/eth/public/block/latest",
-                    "publicURL": "https://www.etherchain.org/blocks/data",
-                    "apiHandler": etherchain_api_handler,
+                    "publicURL": "https://api.etherscan.io/api?module=proxy&action=eth_blockNumber",
+                    "apiHandler": EtherscanAPIHandler,
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/teth/public/block/latest",
-                    "publicURL": "https://blockscout.com/eth/kovan/blocks?type=JSON",
-                    "apiHandler": blockscout_api_handler,
+                    "publicURL": "https://kovan.etherscan.io/api?module=proxy&action=eth_blockNumber",
+                    "apiHandler": EtherscanAPIHandler,
                 }]
             },
             "DASH": {
@@ -239,13 +286,13 @@ def lambda_handler(event, context):
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/dash/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/DASH",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": ChainSoAPIHandler
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tdash/public/block/latest",
                     "publicURL": "https://test.insight.dash.siampm.com/api/blocks",
-                    "apiHandler": insight_api_handler,
+                    "apiHandler": InsightAPIHandler,
                 }]
             },
             "ZEC": {
@@ -255,13 +302,13 @@ def lambda_handler(event, context):
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/zec/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/ZEC",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": ChainSoAPIHandler
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tzec/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/ZECTEST",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": ChainSoAPIHandler
                 }]
             },
             "XRP": {
@@ -271,13 +318,13 @@ def lambda_handler(event, context):
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/xrp/public/block/latest",
                     "publicURL": "https://data.ripple.com/v2/ledgers/",
-                    "apiHandler": ripple_api_handler,
+                    "apiHandler": RippleAPIHandler,
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/txrp/public/block/latest",
                     "publicURL": "https://testnet.data.api.ripple.com/v2/ledgers",
-                    "apiHandler": ripple_api_handler,
+                    "apiHandler": RippleAPIHandler,
                 }]
             },
             "XLM": {
@@ -287,13 +334,13 @@ def lambda_handler(event, context):
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/xlm/public/block/latest",
                     "publicURL": "https://horizon.stellar.org/ledgers?order=desc",
-                    "apiHandler": stellar_api_handler,
+                    "apiHandler": StellarAPIHandler,
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/txlm/public/block/latest",
                     "publicURL": "https://horizon-testnet.stellar.org/ledgers?order=desc",
-                    "apiHandler": stellar_api_handler,
+                    "apiHandler": StellarAPIHandler,
                 }]
             },
         }
@@ -334,32 +381,14 @@ def lambda_handler(event, context):
                 env_data['blocksBehind'] = 'IMS Unresponsive'
                 continue
 
-            response = requests.get(env_data['publicURL'])
-            print(response)
-            print(env_data['publicURL'])
-            retry_count = 0
-            status_code = response.status_code
-            while status_code != 200:
-                time.sleep(8)
-                if retry_count > 4:
-                    break
-                response = requests.get(env_data['publicURL'])
-                status_code = response.status_code
-                if status_code >= 500:
-                    break
-
-            try:
-                public_response = json.loads(response.content)
-            except:
-                public_response = {}
-
             # Use the handler defined on the coin + network to parse the response
             # and return the public height of the blockchain.
             # Pop it from the dict at the same time; we don't want to provide it
             # in the serialized JSON output.
-            api_handler = env_data.pop('apiHandler')
+            api_handler_class = env_data.pop('apiHandler')
+            api_handler = api_handler_class()
             try:
-                public_block_explorer_height = api_handler(public_response)
+                public_block_explorer_height = api_handler.get_url_and_return_height(env_data['publicURL'])
             except KeyError:
                 public_block_explorer_height = 0
 
