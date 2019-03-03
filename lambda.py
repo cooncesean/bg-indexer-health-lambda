@@ -71,6 +71,19 @@ class ChainSoAPIHandler(PublicBlockExplorerHandler):
         return public_response['data']['blocks']
 
 
+class CryptoidAPIHandler(PublicBlockExplorerHandler):
+    """
+    An API handler for Cryptoid (a public block explorer) API responses. Returns
+    the block height for the given coin + network.
+
+    Used to parse: DASH
+
+    Sample URL: https://chainz.cryptoid.info/explorer/index.data.dws?coin=dash&n=1
+    """
+    def parse_request_and_return_height(self, public_response):
+        return public_response['blocks'][0]['height']
+
+
 class InsightAPIHandler(PublicBlockExplorerHandler):
     """
     An API handler for Insight (a public block explorer) API responses. Returns
@@ -285,8 +298,8 @@ def lambda_handler(event, context):
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/dash/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/DASH",
-                    "apiHandler": ChainSoAPIHandler
+                    "publicURL": "https://chainz.cryptoid.info/explorer/index.data.dws?coin=dash&n=1",
+                    "apiHandler": CryptoidAPIHandler
                 },
                 {
                     "network": "TestNet",
