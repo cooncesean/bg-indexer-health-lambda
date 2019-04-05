@@ -152,6 +152,12 @@ def lambda_handler(event, context):
                     "bgURL": "https://test.bitgo.com/api/v1/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
                     "apiHandler": chainso_api_handler
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v1/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
+                    "apiHandler": chainso_api_handler
                 }]
             },
             "BTC": {
@@ -166,6 +172,12 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tbtc/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
+                    "apiHandler": chainso_api_handler
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/tbtc/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
                     "apiHandler": chainso_api_handler
                 }]
@@ -184,6 +196,12 @@ def lambda_handler(event, context):
                     "bgURL": "https://test.bitgo.com/api/v2/tltc/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/LTCTEST",
                     "apiHandler": chainso_api_handler
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/tltc/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/LTCTEST",
+                    "apiHandler": chainso_api_handler
                 }]
             },
             "BCH": {
@@ -198,6 +216,12 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tbch/public/block/latest",
+                    "publicURL": "https://explorer.bitcoin.com/api/tbch/blocks/?limit=1",
+                    "apiHandler": bitcoin_dot_com_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/tbch/public/block/latest",
                     "publicURL": "https://explorer.bitcoin.com/api/tbch/blocks/?limit=1",
                     "apiHandler": bitcoin_dot_com_api_handler,
                 }]
@@ -230,6 +254,12 @@ def lambda_handler(event, context):
                     "bgURL": "https://test.bitgo.com/api/v2/teth/public/block/latest",
                     "publicURL": "https://blockscout.com/eth/kovan/blocks?type=JSON",
                     "apiHandler": blockscout_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/teth/public/block/latest",
+                    "publicURL": "https://blockscout.com/eth/kovan/blocks?type=JSON",
+                    "apiHandler": blockscout_api_handler,
                 }]
             },
             "DASH": {
@@ -244,6 +274,12 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tdash/public/block/latest",
+                    "publicURL": "https://test.insight.dash.siampm.com/api/blocks",
+                    "apiHandler": insight_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/tdash/public/block/latest",
                     "publicURL": "https://test.insight.dash.siampm.com/api/blocks",
                     "apiHandler": insight_api_handler,
                 }]
@@ -262,6 +298,12 @@ def lambda_handler(event, context):
                     "bgURL": "https://test.bitgo.com/api/v2/tzec/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/ZECTEST",
                     "apiHandler": chainso_api_handler
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/tzec/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/ZECTEST",
+                    "apiHandler": chainso_api_handler
                 }]
             },
             "XRP": {
@@ -276,6 +318,12 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/txrp/public/block/latest",
+                    "publicURL": "https://testnet.data.api.ripple.com/v2/ledgers",
+                    "apiHandler": ripple_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/txrp/public/block/latest",
                     "publicURL": "https://testnet.data.api.ripple.com/v2/ledgers",
                     "apiHandler": ripple_api_handler,
                 }]
@@ -294,6 +342,12 @@ def lambda_handler(event, context):
                     "bgURL": "https://test.bitgo.com/api/v2/txlm/public/block/latest",
                     "publicURL": "https://horizon-testnet.stellar.org/ledgers?order=desc",
                     "apiHandler": stellar_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/txlm/public/block/latest",
+                    "publicURL": "https://horizon-testnet.stellar.org/ledgers?order=desc",
+                    "apiHandler": stellar_api_handler,
                 }]
             },
         }
@@ -305,7 +359,7 @@ def lambda_handler(event, context):
     # 3. Add the state to the dict
     for coin_symbol, coin_data in output_data['indexers'].items():
         for env_data in coin_data['environments']:
-            
+
             # If a bgURL is not defined for a particular env, return
             if 'bgURL' not in env_data:
                 env_data['status'] = False
