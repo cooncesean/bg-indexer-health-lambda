@@ -421,6 +421,7 @@ def lambda_handler(event, context):
             # chain head delta exceeds our threshold)
             env_data['status'] = True
             env_data['latestBlock'] = bg_response['height']
+            env_data['referenceBlock'] = public_block_explorer_height
             env_data['blocksBehind'] = '{} blocks'.format(public_block_explorer_height - bg_response['height'])
 
             # If the difference is greater than our threshold, pitch a fit
