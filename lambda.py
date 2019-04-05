@@ -143,13 +143,19 @@ def lambda_handler(event, context):
                 "icon": "assets/images/btc.png",
                 "environments": [{
                     "network": "MainNet",
-                    "bgURL": "https://www.bitgo.com/api/v2/btc/public/block/latest",
+                    "bgURL": "https://www.bitgo.com/api/v1/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/BTC",
                     "apiHandler": chainso_api_handler
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v1/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
+                    "apiHandler": chainso_api_handler
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v1/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
                     "apiHandler": chainso_api_handler
                 }]
@@ -168,6 +174,12 @@ def lambda_handler(event, context):
                     "bgURL": "https://test.bitgo.com/api/v2/tbtc/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
                     "apiHandler": chainso_api_handler
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/tbtc/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
+                    "apiHandler": chainso_api_handler
                 }]
             },
             "LTC": {
@@ -182,6 +194,12 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tltc/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/LTCTEST",
+                    "apiHandler": chainso_api_handler
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/tltc/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/LTCTEST",
                     "apiHandler": chainso_api_handler
                 }]
@@ -200,6 +218,12 @@ def lambda_handler(event, context):
                     "bgURL": "https://test.bitgo.com/api/v2/tbch/public/block/latest",
                     "publicURL": "https://explorer.bitcoin.com/api/tbch/blocks/?limit=1",
                     "apiHandler": bitcoin_dot_com_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/tbch/public/block/latest",
+                    "publicURL": "https://explorer.bitcoin.com/api/tbch/blocks/?limit=1",
+                    "apiHandler": bitcoin_dot_com_api_handler,
                 }]
             },
             "BSV ": {
@@ -214,6 +238,10 @@ def lambda_handler(event, context):
                 {
                     # no public testnet block explorer
                     "network": "TestNet",
+                },
+                {
+                    # no public testnet block explorer
+                    "network": "Dev",
                 }]
             },
             "ETH": {
@@ -228,6 +256,12 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/teth/public/block/latest",
+                    "publicURL": "https://blockscout.com/eth/kovan/blocks?type=JSON",
+                    "apiHandler": blockscout_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/teth/public/block/latest",
                     "publicURL": "https://blockscout.com/eth/kovan/blocks?type=JSON",
                     "apiHandler": blockscout_api_handler,
                 }]
@@ -246,6 +280,12 @@ def lambda_handler(event, context):
                     "bgURL": "https://test.bitgo.com/api/v2/tdash/public/block/latest",
                     "publicURL": "https://test.insight.dash.siampm.com/api/blocks",
                     "apiHandler": insight_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/tdash/public/block/latest",
+                    "publicURL": "https://test.insight.dash.siampm.com/api/blocks",
+                    "apiHandler": insight_api_handler,
                 }]
             },
             "ZEC": {
@@ -260,6 +300,12 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tzec/public/block/latest",
+                    "publicURL": "https://chain.so/api/v2/get_info/ZECTEST",
+                    "apiHandler": chainso_api_handler
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/tzec/public/block/latest",
                     "publicURL": "https://chain.so/api/v2/get_info/ZECTEST",
                     "apiHandler": chainso_api_handler
                 }]
@@ -278,6 +324,12 @@ def lambda_handler(event, context):
                     "bgURL": "https://test.bitgo.com/api/v2/txrp/public/block/latest",
                     "publicURL": "https://testnet.data.api.ripple.com/v2/ledgers",
                     "apiHandler": ripple_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/txrp/public/block/latest",
+                    "publicURL": "https://testnet.data.api.ripple.com/v2/ledgers",
+                    "apiHandler": ripple_api_handler,
                 }]
             },
             "XLM": {
@@ -292,6 +344,12 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/txlm/public/block/latest",
+                    "publicURL": "https://horizon-testnet.stellar.org/ledgers?order=desc",
+                    "apiHandler": stellar_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/txlm/public/block/latest",
                     "publicURL": "https://horizon-testnet.stellar.org/ledgers?order=desc",
                     "apiHandler": stellar_api_handler,
                 }]
@@ -367,10 +425,11 @@ def lambda_handler(event, context):
             # chain head delta exceeds our threshold)
             env_data['status'] = True
             env_data['latestBlock'] = bg_response['height']
-            env_data['blocksBehind'] = '{} blocks'.format(public_block_explorer_height - bg_response['height'])
+            env_data['referenceBlock'] = public_block_explorer_height
+            env_data['blocksBehind'] = '{} blocks'.format(int(public_block_explorer_height) - int(bg_response['height']))
 
             # If the difference is greater than our threshold, pitch a fit
-            if (public_block_explorer_height - bg_response['height']) > BLOCKS_BEHIND_THRESHOLD:
+            if (int(public_block_explorer_height) - int(bg_response['height'])) > BLOCKS_BEHIND_THRESHOLD:
                 env_data['status'] = False
 
     # Jsonify the output dict
