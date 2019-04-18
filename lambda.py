@@ -254,8 +254,8 @@ def lambda_handler(event, context):
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/dash/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/DASH",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "https://api.blockchair.com/dash/blocks?limit=1",
+                    "apiHandler": blockchair_api_handler
                 },
                 {
                     "network": "TestNet",
