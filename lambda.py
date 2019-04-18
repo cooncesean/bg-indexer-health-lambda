@@ -260,14 +260,14 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tdash/public/block/latest",
-                    "publicURL": "https://test.insight.dash.siampm.com/api/blocks",
-                    "apiHandler": insight_api_handler,
+                    "publicURL": "https://chain.so/api/v2/get_info/DASHTEST",
+                    "apiHandler": chainso_api_handler,
                 },
                 {
                     "network": "Dev",
                     "bgURL": "https://webdev.bitgo.com/api/v2/tdash/public/block/latest",
-                    "publicURL": "https://test.insight.dash.siampm.com/api/blocks",
-                    "apiHandler": insight_api_handler,
+                    "publicURL": "https://chain.so/api/v2/get_info/DASHTEST",
+                    "apiHandler": chainso_api_handler,
                 }]
             },
             "ZEC": {
