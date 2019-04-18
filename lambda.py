@@ -392,34 +392,46 @@ def lambda_handler(event, context):
                 env_data['blocksBehind'] = 'IMS Unresponsive'
                 continue
 
-            response = requests.get(env_data['publicURL'])
-            print(response)
-            print(env_data['publicURL'])
-            retry_count = 0
-            status_code = response.status_code
-            while status_code != 200:
-                time.sleep(8)
-                if retry_count > 4:
-                    break
+            # In all cases, we use the same URL to fetch public Dev and Test
+            # block explorer data. Instead of making another round-trip to the
+            # service, use the cached response from the TestNet call
+            #
+            # (this is kinda nasty; this massive conditional stinks and i'm not
+            # a fan of the brittleness introduced by assuming the list of envs
+            # for each coin will be 'prod', 'test', 'dev'.... but, side project
+            # ¯\_(ツ)_/¯ )
+            if env_data['network'] == 'Dev':
+                env_data.pop('apiHandler')  # remove this fcn as it is not json serializable and should not be included in the json output
+                public_block_explorer_height = coin_data['environments'][1].get('referenceBlock', 0)
+            else:
                 response = requests.get(env_data['publicURL'])
+                print(response)
+                print(env_data['publicURL'])
+                retry_count = 0
                 status_code = response.status_code
-                if status_code >= 500:
-                    break
+                while status_code != 200:
+                    time.sleep(8)
+                    if retry_count > 4:
+                        break
+                    response = requests.get(env_data['publicURL'])
+                    status_code = response.status_code
+                    if status_code >= 500:
+                        break
 
-            try:
-                public_response = json.loads(response.content)
-            except:
-                public_response = {}
+                try:
+                    public_response = json.loads(response.content)
+                except:
+                    public_response = {}
 
-            # Use the handler defined on the coin + network to parse the response
-            # and return the public height of the blockchain.
-            # Pop it from the dict at the same time; we don't want to provide it
-            # in the serialized JSON output.
-            api_handler = env_data.pop('apiHandler')
-            try:
-                public_block_explorer_height = api_handler(public_response)
-            except KeyError:
-                public_block_explorer_height = 0
+                # Use the handler defined on the coin + network to parse the response
+                # and return the public height of the blockchain.
+                # Pop it from the dict at the same time; we don't want to provide it
+                # in the serialized JSON output.
+                api_handler = env_data.pop('apiHandler')
+                try:
+                    public_block_explorer_height = api_handler(public_response)
+                except KeyError:
+                    public_block_explorer_height = 0
 
             # Set values (assume a healthy status; it is flipped below if the
             # chain head delta exceeds our threshold)
