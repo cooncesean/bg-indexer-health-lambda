@@ -140,7 +140,7 @@ def lambda_handler(event, context):
         "indexers": {
             "v1BTC": {
                 "name": "v1 Bitcoin",
-                "icon": "assets/images/btc.png",
+                "icon": "assets/images/btc_v1.png",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v1/block/latest",
@@ -224,24 +224,6 @@ def lambda_handler(event, context):
                     "bgURL": "https://webdev.bitgo.com/api/v2/tbch/public/block/latest",
                     "publicURL": "https://explorer.bitcoin.com/api/tbch/blocks/?limit=1",
                     "apiHandler": bitcoin_dot_com_api_handler,
-                }]
-            },
-            "BSV ": {
-                "name": "Bitcoin SV",
-                "icon": "assets/images/bsv.png",
-                "environments": [{
-                    "network": "MainNet",
-                    "bgURL": "https://www.bitgo.com/api/v2/bsv/public/block/latest",
-                    "publicURL": "https://api.blockchair.com/bitcoin-sv/blocks?limit=1",
-                    "apiHandler": blockchair_api_handler,
-                },
-                {
-                    # no public testnet block explorer
-                    "network": "TestNet",
-                },
-                {
-                    # no public testnet block explorer
-                    "network": "Dev",
                 }]
             },
             "ETH": {
@@ -352,6 +334,24 @@ def lambda_handler(event, context):
                     "bgURL": "https://webdev.bitgo.com/api/v2/txlm/public/block/latest",
                     "publicURL": "https://horizon-testnet.stellar.org/ledgers?order=desc",
                     "apiHandler": stellar_api_handler,
+                }]
+            },
+            "BSV ": {
+                "name": "Bitcoin SV",
+                "icon": "assets/images/bsv.png",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/bsv/public/block/latest",
+                    "publicURL": "https://api.blockchair.com/bitcoin-sv/blocks?limit=1",
+                    "apiHandler": blockchair_api_handler,
+                },
+                {
+                    # no public testnet block explorer
+                    "network": "TestNet",
+                },
+                {
+                    # no public testnet block explorer
+                    "network": "Dev",
                 }]
             },
         }
