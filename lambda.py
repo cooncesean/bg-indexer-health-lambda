@@ -348,10 +348,12 @@ def lambda_handler(event, context):
                 {
                     # no public testnet block explorer
                     "network": "TestNet",
+                    "apiHandler": blockchair_api_handler,
                 },
                 {
                     # no public testnet block explorer
                     "network": "Dev",
+                    "apiHandler": blockchair_api_handler,
                 }]
             },
         }
@@ -443,6 +445,13 @@ def lambda_handler(event, context):
             # If the difference is greater than our threshold, pitch a fit
             if (int(public_block_explorer_height) - int(bg_response['height'])) > BLOCKS_BEHIND_THRESHOLD:
                 env_data['status'] = False
+
+    # Iterate through the dict and pop any non-json serializable objects that
+    # are about to be json dump'd
+    for k, v in output_data['indexers'].items():
+        for env_data in v['environments']:
+            if 'apiHandler' in env_data:
+                env_data.pop('apiHandler')
 
     # Jsonify the output dict
     string = json.dumps(output_data)
