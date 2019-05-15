@@ -384,7 +384,15 @@ def lambda_handler(event, context):
                 env_data['blocksBehind'] = 'IMS Unresponsive'
                 continue
 
-            bg_response = json.loads(response.content)
+            print(env_data['bgURL'])
+            print(env_data['publicURL'])
+            try:
+                bg_response = json.loads(response.content)
+            except json.JSONDecodeError:
+                env_data['status'] = False
+                env_data['latestBlock'] = 'IMS Unresponsive'
+                env_data['blocksBehind'] = 'IMS Unresponsive'
+                continue
 
             # If `height` isn't in the response, raise a red flag; this happens
             # when the IMS has gotten into a wierd state.
@@ -407,8 +415,6 @@ def lambda_handler(event, context):
                 public_block_explorer_height = coin_data['environments'][1].get('referenceBlock', 0)
             else:
                 response = requests.get(env_data['publicURL'])
-                print(response)
-                print(env_data['publicURL'])
                 retry_count = 0
                 status_code = response.status_code
                 while status_code != 200:
