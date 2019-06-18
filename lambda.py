@@ -414,7 +414,7 @@ def lambda_handler(event, context):
                 env_data.pop('apiHandler')  # remove this fcn as it is not json serializable and should not be included in the json output
                 public_block_explorer_height = coin_data['environments'][1].get('referenceBlock', 0)
             else:
-                response = requests.get(env_data['publicURL'])
+                response = requests.get(env_data['publicURL'], verify=False)
                 retry_count = 0
                 status_code = response.status_code
                 while status_code != 200:
