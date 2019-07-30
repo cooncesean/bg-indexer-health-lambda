@@ -7,6 +7,16 @@ import boto3
 from botocore.exceptions import ConnectionError
 from botocore.vendored import requests
 
+def algorand_api_handler(response_data):
+    """
+    An API handler for algoexplorer.io (a public block explorer) API responses. Returns
+    the block height (round) for the given coin + network.
+
+    Used to parse: ALGO
+
+    Sample URL: https://api.algoexplorer.io/v1/block/latest/1
+    """
+    return response_data[0]['round']
 
 def chainso_api_handler(response_data):
     """
@@ -354,6 +364,28 @@ def lambda_handler(event, context):
                     # no public testnet block explorer
                     "network": "Dev",
                     "apiHandler": blockchair_api_handler,
+                }]
+            },
+            "ALGO": {
+                "name": "Algorand",
+                "icon": "assets/images/algo.png",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/algo/public/block/latest",
+                    "publicURL": "https://api.algoexplorer.io/v1/block/latest/1",
+                    "apiHandler": algorand_api_handler,
+                },
+                {
+                    "network": "TestNet",
+                    "bgURL": "https://test.bitgo.com/api/v2/talgo/public/block/latest",
+                    "publicURL": "https://api.testnet.algoexplorer.io/v1/block/latest/1",
+                    "apiHandler": algorand_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/talgo/public/block/latest",
+                    "publicURL": "https://api.testnet.algoexplorer.io/v1/block/latest/1",
+                    "apiHandler": algorand_api_handler,
                 }]
             },
         }
