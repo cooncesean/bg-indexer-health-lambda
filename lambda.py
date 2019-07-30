@@ -7,6 +7,7 @@ import boto3
 from botocore.exceptions import ConnectionError
 from botocore.vendored import requests
 
+
 def algorand_api_handler(response_data):
     """
     An API handler for algoexplorer.io (a public block explorer) API responses. Returns
@@ -17,6 +18,7 @@ def algorand_api_handler(response_data):
     Sample URL: https://api.algoexplorer.io/v1/block/latest/1
     """
     return response_data[0]['round']
+
 
 def chainso_api_handler(response_data):
     """
