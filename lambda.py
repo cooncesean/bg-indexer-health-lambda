@@ -8,6 +8,19 @@ from botocore.exceptions import ConnectionError
 from botocore.vendored import requests
 
 
+def eos_api_handler(response_data):
+    """
+    An API handler for jungle2.cryptolions.io (a public block explorer) API responses. Returns
+    the block height (round) for the given coin + network.
+
+    Used to parse: TEOS
+
+    Sample URL: EOS testnet: http://jungle2.cryptolions.io/v1/chain/get_info
+    EOS mainnet: https://api.eosnewyork.io/v1/chain/get_info
+    """
+    return response_data['head_block_num']
+
+
 def algorand_api_handler(response_data):
     """
     An API handler for algoexplorer.io (a public block explorer) API responses. Returns
@@ -388,6 +401,28 @@ def lambda_handler(event, context):
                     "bgURL": "https://webdev.bitgo.com/api/v2/talgo/public/block/latest",
                     "publicURL": "https://api.testnet.algoexplorer.io/v1/block/latest/1",
                     "apiHandler": algorand_api_handler,
+                }]
+            },
+            "EOS": {
+                "name": "EOS",
+                "icon": "assets/images/eos.png",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/eos/public/block/latest",
+                    "publicURL": "https://api.eosnewyork.io/v1/chain/get_info",
+                    "apiHandler": eos_api_handler,
+                },
+                {
+                    "network": "TestNet",
+                    "bgURL": "https://test.bitgo.com/api/v2/teos/public/block/latest",
+                    "publicURL": "http://jungle2.cryptolions.io/v1/chain/get_info",
+                    "apiHandler": eos_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/teos/public/block/latest",
+                    "publicURL": "http://jungle2.cryptolions.io/v1/chain/get_info",
+                    "apiHandler": eos_api_handler,
                 }]
             },
         }
