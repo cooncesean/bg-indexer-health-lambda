@@ -33,16 +33,39 @@ def algorand_api_handler(response_data):
     return response_data[0]['round']
 
 
-def chainso_api_handler(response_data):
+def zcha_api_handler(response_data):
     """
-    An API handler for Chain.so (a public block explorer) API responses. Returns
+    An API handler for zcha.in (a public block explorer) API responses. Returns
     the block height for the given coin + network.
 
-    Used to parse: BTC, LTC, DASH, ZEC
+    Used to parse: ZEC (mainnet)
 
-    Sample URL: https://chain.so/api/v2/get_info/BTC
+    Sample URL: https://api.zcha.in/v2/mainnet/network
     """
-    return response_data['data']['blocks']
+    return response_data['blockNumber']
+
+def blockstream_api_handler(response_data):
+    """
+    An API handler for blockstream (a public block explorer) API responses. Returns
+    the block height for the given coin + network.
+
+    Used to parse: BTC (mainnet + testnet)
+
+    Sample URL: https://blockstream.info/testnet/api/blocks/
+    """
+    return response_data[0]['height']
+
+
+def litecointools_api_handler(response_data):
+    """
+    An API handler for blockstream (a public block explorer) API responses. Returns
+    the block height for the given coin + network.
+
+    Used to parse: LTC (mainnet + testnet)
+
+    Sample URL: http://testnet.litecointools.com/status
+    """
+    return response_data['info']['blocks']
 
 
 def insight_api_handler(response_data):
@@ -133,7 +156,7 @@ def blockchair_api_handler(response_data):
     An API handler for blockchair (a public block explorer) API responses. Returns
     the block height for the given coin + network.
 
-    Used to parse: BSV
+    Used to parse: BSV and Litecoin
 
     Sample URL: https://api.blockchair.com/bitcoin-sv/blocks?limit=1
     """
@@ -169,20 +192,20 @@ def lambda_handler(event, context):
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v1/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/BTC",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "https://blockstream.info/api/blocks/",
+                    "apiHandler": blockstream_api_handler
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v1/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "https://blockstream.info/testnet/api/blocks/",
+                    "apiHandler": blockstream_api_handler
                 },
                 {
                     "network": "Dev",
                     "bgURL": "https://webdev.bitgo.com/api/v1/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "https://blockstream.info/testnet/api/blocks/",
+                    "apiHandler": blockstream_api_handler
                 }]
             },
             "BTC": {
@@ -191,20 +214,20 @@ def lambda_handler(event, context):
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/btc/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/BTC",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "https://blockstream.info/api/blocks/",
+                    "apiHandler": blockstream_api_handler
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tbtc/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "https://blockstream.info/testnet/api/blocks/",
+                    "apiHandler": blockstream_api_handler
                 },
                 {
                     "network": "Dev",
                     "bgURL": "https://webdev.bitgo.com/api/v2/tbtc/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/BTCTEST",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "https://blockstream.info/testnet/api/blocks/",
+                    "apiHandler": blockstream_api_handler
                 }]
             },
             "LTC": {
@@ -213,20 +236,20 @@ def lambda_handler(event, context):
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/ltc/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/LTC",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "https://api.blockchair.com/litecoin/blocks?limit=1",
+                    "apiHandler": blockchair_api_handler
                 },
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/tltc/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/LTCTEST",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "http://testnet.litecointools.com/status",
+                    "apiHandler": litecointools_api_handler
                 },
                 {
                     "network": "Dev",
                     "bgURL": "https://webdev.bitgo.com/api/v2/tltc/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/LTCTEST",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "http://testnet.litecointools.com/status",
+                    "apiHandler": litecointools_api_handler
                 }]
             },
             "BCH": {
@@ -301,20 +324,18 @@ def lambda_handler(event, context):
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/zec/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/ZEC",
-                    "apiHandler": chainso_api_handler
+                    "publicURL": "https://api.zcha.in/v2/mainnet/network",
+                    "apiHandler": zcha_api_handler
                 },
                 {
+                    # no public testnet block explorer
                     "network": "TestNet",
-                    "bgURL": "https://test.bitgo.com/api/v2/tzec/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/ZECTEST",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": None,
                 },
                 {
+                    # no public testnet block explorer
                     "network": "Dev",
-                    "bgURL": "https://webdev.bitgo.com/api/v2/tzec/public/block/latest",
-                    "publicURL": "https://chain.so/api/v2/get_info/ZECTEST",
-                    "apiHandler": chainso_api_handler
+                    "apiHandler": None,
                 }]
             },
             "XRP": {
