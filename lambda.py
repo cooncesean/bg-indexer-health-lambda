@@ -4,6 +4,7 @@ import json
 import time
 
 import boto3
+from botocore.vendored.requests.adapters import ReadTimeout
 from botocore.exceptions import ConnectionError
 from botocore.vendored import requests
 
@@ -468,7 +469,7 @@ def lambda_handler(event, context):
                 response = requests.get(env_data['bgURL'], timeout=4)
             # If the server took more than four seconds to respond, consider it
             # down and alert the status
-            except ConnectionError:
+            except (ConnectionError, ReadTimeout):
                 env_data['status'] = False
                 env_data['latestBlock'] = 'IMS Unresponsive'
                 env_data['blocksBehind'] = 'IMS Unresponsive'
