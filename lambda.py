@@ -189,7 +189,7 @@ def lambda_handler(event, context):
         "indexers": {
             "v1BTC": {
                 "name": "v1 Bitcoin",
-                "icon": "assets/images/btc_v1.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/BTC.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v1/block/latest",
@@ -211,7 +211,7 @@ def lambda_handler(event, context):
             },
             "BTC": {
                 "name": "v2 Bitcoin",
-                "icon": "assets/images/btc.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/BTC.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/btc/public/block/latest",
@@ -233,7 +233,7 @@ def lambda_handler(event, context):
             },
             "LTC": {
                 "name": "Litecoin",
-                "icon": "assets/images/ltc.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/LTC.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/ltc/public/block/latest",
@@ -255,7 +255,7 @@ def lambda_handler(event, context):
             },
             "BCH": {
                 "name": "Bitcoin Cash",
-                "icon": "assets/images/bch.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/BCH.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/bch/public/block/latest",
@@ -277,7 +277,7 @@ def lambda_handler(event, context):
             },
             "ETH": {
                 "name": "Ethereum",
-                "icon": "assets/images/eth.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/ETH.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/eth/public/block/latest",
@@ -299,7 +299,7 @@ def lambda_handler(event, context):
             },
             "DASH": {
                 "name": "Dash",
-                "icon": "assets/images/dash.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/DASH.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/dash/public/block/latest",
@@ -321,7 +321,7 @@ def lambda_handler(event, context):
             },
             "ZEC": {
                 "name": "ZCash",
-                "icon": "assets/images/zec.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/ZEC.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/zec/public/block/latest",
@@ -341,7 +341,7 @@ def lambda_handler(event, context):
             },
             "XRP": {
                 "name": "Ripple",
-                "icon": "assets/images/xrp.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/XRP.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/xrp/public/block/latest",
@@ -363,7 +363,7 @@ def lambda_handler(event, context):
             },
             "XLM": {
                 "name": "Stellar",
-                "icon": "assets/images/xlm.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/XLM.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/xlm/public/block/latest",
@@ -385,7 +385,7 @@ def lambda_handler(event, context):
             },
             "BSV ": {
                 "name": "Bitcoin SV",
-                "icon": "assets/images/bsv.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/BSV.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/bsv/public/block/latest",
@@ -405,7 +405,7 @@ def lambda_handler(event, context):
             },
             "ALGO": {
                 "name": "Algorand",
-                "icon": "assets/images/algo.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/ALGO.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/algo/public/block/latest",
@@ -427,7 +427,7 @@ def lambda_handler(event, context):
             },
             "EOS": {
                 "name": "EOS",
-                "icon": "assets/images/eos.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/EOS.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/eos/public/block/latest",
