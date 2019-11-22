@@ -462,7 +462,7 @@ def lambda_handler(event, context):
             },
             "TRX": {
                 "name": "TRX",
-                "icon": "assets/images/trx.png",
+                "icon": "https://app.bitgo.com/assets/img/icons/TRX.svg",
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/trx/public/block/latest",
