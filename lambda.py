@@ -9,6 +9,19 @@ from botocore.exceptions import ConnectionError
 from botocore.vendored import requests
 
 
+def trx_api_handler(response_data):
+    """
+    An API handler for tronscan (a public block explorer) API responses. Returns
+    the block height for the given coin + network.
+
+    Used to parse: TRX
+
+    Sample URL: TRX testnet: https://api.shasta.tronscan.org/api/system/status
+    TRX mainnet: https://apilist.tronscan.org/api/system/status
+    """
+    return response_data['database']['block']
+
+
 def eos_api_handler(response_data):
     """
     An API handler for jungle2.cryptolions.io (a public block explorer) API responses. Returns
@@ -445,6 +458,28 @@ def lambda_handler(event, context):
                     "bgURL": "https://webdev.bitgo.com/api/v2/teos/public/block/latest",
                     "publicURL": "http://jungle2.cryptolions.io/v1/chain/get_info",
                     "apiHandler": eos_api_handler,
+                }]
+            },
+            "TRX": {
+                "name": "TRX",
+                "icon": "assets/images/trx.png",
+                "environments": [{
+                    "network": "MainNet",
+                    "bgURL": "https://www.bitgo.com/api/v2/trx/public/block/latest",
+                    "publicURL": "https://apilist.tronscan.org/api/system/status",
+                    "apiHandler": trx_api_handler,
+                },
+                {
+                    "network": "TestNet",
+                    "bgURL": "https://test.bitgo.com/api/v2/ttrx/public/block/latest",
+                    "publicURL": "https://api.shasta.tronscan.org/api/system/status",
+                    "apiHandler": trx_api_handler,
+                },
+                {
+                    "network": "Dev",
+                    "bgURL": "https://webdev.bitgo.com/api/v2/ttrx/public/block/latest",
+                    "publicURL": "https://api.shasta.tronscan.org/api/system/status",
+                    "apiHandler": trx_api_handler,
                 }]
             },
         }
