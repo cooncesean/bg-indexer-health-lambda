@@ -117,6 +117,7 @@ def bitcoin_dot_com_api_handler(response_data):
     """
     return int(response_data['blocks'][0]['height'])
 
+
 def etherchain_api_handler(response_data):
     """
     An API handler for etherchain.org (a public block explorer) API responses. Returns
@@ -564,7 +565,7 @@ def lambda_handler(event, context):
                 api_handler = env_data.pop('apiHandler')
                 try:
                     public_block_explorer_height = api_handler(public_response)
-                except KeyError:
+                except (KeyError, IndexError):
                     public_block_explorer_height = 0
 
             # Set values (assume a healthy status; it is flipped below if the
