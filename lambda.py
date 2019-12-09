@@ -58,6 +58,7 @@ def zcha_api_handler(response_data):
     """
     return response_data['blockNumber']
 
+
 def blockstream_api_handler(response_data):
     """
     An API handler for blockstream (a public block explorer) API responses. Returns
