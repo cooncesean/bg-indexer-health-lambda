@@ -7,8 +7,8 @@ import time
 import boto3
 from botocore.vendored.requests.adapters import ReadTimeout
 from botocore.exceptions import ConnectionError
-from botocore.vendored import requests
 import jsonrpcclient
+import requests
 
 
 class PublicBlockExplorerHandler:
@@ -29,17 +29,18 @@ class PublicBlockExplorerHandler:
         explorer specified is not available via an http + JSON request/response
         cycle.
         """
-        response = requests.get(public_block_explorer_url)
         print(public_block_explorer_url)
-        print(response)
+        response = requests.get(public_block_explorer_url, timeout=5)
+        print(response.status_code)
         retry_count = 0
         status_code = response.status_code
         while status_code != 200:
             time.sleep(8)
             if retry_count > 4:
                 break
-            response = requests.get(public_block_explorer_url)
+            response = requests.get(public_block_explorer_url, timeout=5)
             status_code = response.status_code
+            retry_count += 1
             if status_code >= 500:
                 break
 
@@ -126,7 +127,7 @@ class ImginaryDotCashAPIHandler(PublicBlockExplorerHandler):
 
 class LitecoinToolsAPIHandler(PublicBlockExplorerHandler):
     """
-    An API handler for etherscan.io (a public block explorer) API responses. Returns
+    An API handler for litecointools (a public block explorer) API responses. Returns
     the block height for the given coin + network.
 
     Used to parse: TLTC
@@ -140,7 +141,7 @@ class LitecoinToolsAPIHandler(PublicBlockExplorerHandler):
 
 class ZchaApiHandler(PublicBlockExplorerHandler):
     """
-    An API handler for etherscan.io (a public block explorer) API responses. Returns
+    An API handler for zchain (a public block explorer) API responses. Returns
     the block height for the given coin + network.
 
     Used to parse: ZEC
@@ -452,10 +453,12 @@ def lambda_handler(event, context):
                 {
                     # no public testnet block explorer
                     "network": "TestNet",
+                    "apiHandler": None,
                 },
                 {
                     # no public testnet block explorer
                     "network": "Dev",
+                    "apiHandler": None,
                 }]
             },
             "XRP": {
@@ -470,14 +473,17 @@ def lambda_handler(event, context):
                 {
                     "network": "TestNet",
                     "bgURL": "https://test.bitgo.com/api/v2/txrp/public/block/latest",
-                    "publicURL": "https://s.altnet.rippletest.net:51234",
-                    "apiHandler": AltNetTestnetRippleAPIHandler,
+                    # "publicURL": "https://s.altnet.rippletest.net:51234",
+                    # "apiHandler": AltNetTestnetRippleAPIHandler,
+                    "apiHandler": None,
+
                 },
                 {
                     "network": "Dev",
                     "bgURL": "https://webdev.bitgo.com/api/v2/txrp/public/block/latest",
-                    "publicURL": "https://s.altnet.rippletest.net:51234",
-                    "apiHandler": AltNetTestnetRippleAPIHandler,
+                    # "publicURL": "https://s.altnet.rippletest.net:51234",
+                    # "apiHandler": AltNetTestnetRippleAPIHandler,
+                    "apiHandler": None,
                 }]
             },
             "XLM": {
@@ -600,12 +606,7 @@ def lambda_handler(event, context):
                 continue
 
             print(env_data['bgURL'])
-            print(env_data['publicURL'])
-            if response.status_code != 200:
-                env_data['status'] = False
-                env_data['latestBlock'] = 'IMS Unresponsive'
-                env_data['blocksBehind'] = 'IMS Unresponsive'
-                continue
+            print(env_data.get('publicURL', None))
             try:
                 bg_response = json.loads(response.content)
             except json.JSONDecodeError:
@@ -622,16 +623,29 @@ def lambda_handler(event, context):
                 env_data['blocksBehind'] = 'IMS Unresponsive'
                 continue
 
-            # Use the handler defined on the coin + network to parse the response
-            # and return the public height of the blockchain.
-            # Pop it from the dict at the same time; we don't want to provide it
-            # in the serialized JSON output.
+            # Get the api handler class from the config
             api_handler_class = env_data.pop('apiHandler')
-            api_handler = api_handler_class()
-            try:
-                public_block_explorer_height = api_handler.get_url_and_return_height(env_data['publicURL'])
-            except KeyError:
-                public_block_explorer_height = 0
+            if api_handler_class is None:
+                env_data['status'] = False
+                env_data['latestBlock'] = 'IMS Unresponsive'
+                env_data['blocksBehind'] = 'IMS Unresponsive'
+                continue
+
+            # In all cases, we use the same URL to fetch public Dev and Test
+            # block explorer data. Instead of making another round-trip to the
+            # service, use the cached response from the TestNet call
+            #
+            # (this is kinda nasty; this massive conditional stinks and i'm not
+            # a fan of the brittleness introduced by assuming the list of envs
+            # for each coin will be 'prod', 'test', 'dev'.... but, side project
+            if env_data['network'] == 'Dev':
+                public_block_explorer_height = coin_data['environments'][1].get('referenceBlock', 0)
+            else:
+                api_handler = api_handler_class()
+                try:
+                    public_block_explorer_height = api_handler.get_url_and_return_height(env_data['publicURL'])
+                except (KeyError, json.JSONDecodeError):
+                    public_block_explorer_height = 0
 
             # Set values (assume a healthy status; it is flipped below if the
             # chain head delta exceeds our threshold)
@@ -673,3 +687,5 @@ def lambda_handler(event, context):
     }
     s3.Bucket(bucket_name).put_object(Key=dated_file_name, **aws_kwargs)
     s3.Bucket(bucket_name).put_object(Key=latest_file_name, **aws_kwargs)
+
+lambda_handler(0,0)
