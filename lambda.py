@@ -39,6 +39,8 @@ class PublicBlockExplorerHandler:
             if retry_count > 4:
                 break
             response = requests.get(public_block_explorer_url, timeout=5)
+            print('Retried {} times...'.format(retry_count))
+            print(response.status_code)
             status_code = response.status_code
             retry_count += 1
             if status_code >= 500:
@@ -163,6 +165,7 @@ class EtherscanAPIHandler(PublicBlockExplorerHandler):
     Sample URL: https://kovan.etherscan.io/api?module=proxy&action=eth_blockNumber
     """
     def parse_request_and_return_height(self, response):
+
         json_response = json.loads(response.content)
         return int(json_response['result'], 16)
 
@@ -366,15 +369,15 @@ def lambda_handler(event, context):
                 },
                 {
                     "network": "TestNet",
-                    "bgURL": "https://test.bitgo.com/api/v2/tbch/public/block/latest",
-                    "publicURL": "http://testnet.imaginary.cash/blocks",
-                    "apiHandler": ImginaryDotCashAPIHandler,
+                    # "bgURL": "https://test.bitgo.com/api/v2/tbch/public/block/latest",
+                    # "publicURL": "http://testnet.imaginary.cash/blocks",
+                    # "apiHandler": ImginaryDotCashAPIHandler,
                 },
                 {
                     "network": "Dev",
-                    "bgURL": "https://webdev.bitgo.com/api/v2/tbch/public/block/latest",
-                    "publicURL": "http://testnet.imaginary.cash/blocks",
-                    "apiHandler": ImginaryDotCashAPIHandler,
+                    # "bgURL": "https://webdev.bitgo.com/api/v2/tbch/public/block/latest",
+                    # "publicURL": "http://testnet.imaginary.cash/blocks",
+                    # "apiHandler": ImginaryDotCashAPIHandler,
                 }]
             },
             "BSV ": {
@@ -606,7 +609,6 @@ def lambda_handler(event, context):
                 continue
 
             print(env_data['bgURL'])
-            print(env_data.get('publicURL', None))
             try:
                 bg_response = json.loads(response.content)
             except json.JSONDecodeError:
@@ -644,7 +646,8 @@ def lambda_handler(event, context):
                 api_handler = api_handler_class()
                 try:
                     public_block_explorer_height = api_handler.get_url_and_return_height(env_data['publicURL'])
-                except (KeyError, json.JSONDecodeError):
+                except Exception as e:
+                    print('Exception: {}'.format(e))
                     public_block_explorer_height = 0
 
             # Set values (assume a healthy status; it is flipped below if the
@@ -688,4 +691,4 @@ def lambda_handler(event, context):
     s3.Bucket(bucket_name).put_object(Key=dated_file_name, **aws_kwargs)
     s3.Bucket(bucket_name).put_object(Key=latest_file_name, **aws_kwargs)
 
-lambda_handler(0,0)
+# lambda_handler(0,0)
