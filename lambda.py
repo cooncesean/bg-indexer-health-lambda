@@ -539,7 +539,7 @@ def lambda_handler(event, context):
                 "environments": [{
                     "network": "MainNet",
                     "bgURL": "https://www.bitgo.com/api/v2/eos/public/block/latest",
-                    "publicURL": "https://api.eosnewyork.io/v1/chain/get_info",
+                    "publicURL": "https://bp.cryptolions.io/v1/chain/get_info",
                     "apiHandler": EOSAPIHander,
                 },
                 {
